@@ -16,17 +16,29 @@ from .reranker import get_reranker_cls
 from .construct_email import render_email
 
 
+
 def normalize_path_patterns(patterns, config_key: str):
     if patterns is None:
         return None
+
     if not isinstance(patterns, (list, ListConfig)):
+        full_config_key = config_key
+
+        if not full_config_key.startswith("config."):
+            full_config_key = f"config.zotero.{full_config_key}"
+
         raise TypeError(
-            f"{config_key} must be a list of glob patterns or null, "
+            f"{full_config_key} must be a list of glob patterns or null, "
             'for example ["01-VLA&Embodied AI"].'
         )
+
     if any(not isinstance(pattern, str) for pattern in patterns):
-        raise TypeError(f"{config_key} must contain only strings.")
+        raise TypeError(
+            f"{config_key} must contain only strings."
+        )
+
     return list(patterns)
+
 
 
 class Executor:
